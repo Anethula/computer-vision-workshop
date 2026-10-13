@@ -1,0 +1,28 @@
+{
+  "name": "usacs-vision-playground",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "vite build",
+    "preview": "vite preview --host 127.0.0.1",
+    "models": "node scripts/prepare-models.mjs",
+    "test": "node --test tests/*.test.js",
+    "test:browser": "playwright test",
+    "predev": "node scripts/build-worker.mjs",
+    "prebuild": "node scripts/build-worker.mjs"
+  },
+  "dependencies": {
+    "@mediapipe/tasks-vision": "0.10.22-rc.20250304",
+    "@tensorflow-models/coco-ssd": "2.2.3",
+    "@tensorflow/tfjs-core": "4.22.0",
+    "@tensorflow/tfjs-converter": "4.22.0",
+    "@tensorflow/tfjs-backend-cpu": "4.22.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.56.1",
+    "vite": "6.4.4",
+    "esbuild": "0.25.12"
+  }
+}
