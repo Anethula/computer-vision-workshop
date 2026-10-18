@@ -6,7 +6,7 @@ A 90-minute Rutgers USACS computer vision workshop, delivered as one static webs
 
 - **Object Hunter:** TensorFlow.js COCO-SSD, actual bounding boxes, confidence filtering, class tracking, and a unique-class scavenger score. Includes an example photo and local image upload for genuine inference without a camera.
 - **Facial Expression Analyzer:** MediaPipe Face Landmarker, 478 landmarks and real blendshape outputs. Smile, blink, jaw opening, frown, and eyebrow rules use adjustable thresholds and exponential smoothing. Movement estimates are not measurements of internal emotion.
-- **Gesture Controller:** 21 hand landmarks, mirrored index-tip cursor, thumb/index pinch, hysteresis, smoothing, draggable circles/squares, and a target challenge.
+- **Gesture Controller:** 21 hand landmarks, mirrored index-tip cursor, thumb/index pinch, hysteresis, smoothing, draggable circles/squares, a target challenge, and open-hand energy orbs that poof when you close your fist.
 - **Gesture Arcade:** hand-controlled paddle, pointer/keyboard fallback, falling orbs, bonus points, collisions, lives, score, increasing difficulty, pause/restart, and browser-local high score.
 
 ## Organizer setup
@@ -29,6 +29,8 @@ npm run preview
 The `predev` and `prebuild` scripts generate `public/vision-worker.js` using pinned esbuild. Edit `src/shared/vision-worker.js`, not the generated bundle. A classic worker is used because MediaPipe’s WASM loader calls `importScripts`. The production output is `dist/`. Do not share your development-server URL with students. Deploy the static output over HTTPS.
 
 ## Student setup
+
+**Brand new to this? Read [GETTING_STARTED.md](GETTING_STARTED.md).** Mac and Windows students joining the deployed workshop need only a compatible browser, webcam, internet access, and camera permission. They do not clone the repository or install development tools. Local source editing is optional and requires Node.js 22+; Git is needed only when cloning rather than downloading a ZIP.
 
 Open the deployed URL in current Chrome or Edge. First use **Device check**, then choose a lab. Press **Start Camera** and allow access. Paste commands into the website console and press **Run Commands**. Ctrl/⌘+Enter runs commands; Alt+Up/Down recalls command history. Each line is validated independently; valid lines run even if another line has an error. Commands are lab-specific, not shell commands or JavaScript. `help` lists supported commands; `reset` restores defaults and resets the lab state without reloading.
 
@@ -70,6 +72,8 @@ Threshold range: 0.05–1. Smoothing: whole number 1–20; 1 means no smoothing.
 
 ### Gesture Controller
 
+Extend all four fingers with your palm facing the camera to charge a swirling orb at your palm. Close into a fist to release a one-shot poof; open again to recharge. Two fresh model results at least 70ms apart confirm each pose. Finger angles and palm-relative distances support either hand and different camera distances, but lighting and occlusion still affect recognition. Tracking loss, Stop Camera, Reset Lab, or disabling effects clears the effect without inventing a burst. Stale tracking clears after 1.2 seconds.
+
 ```text
 show landmarks on
 set pinch_distance 40
@@ -77,13 +81,15 @@ set object_size 80
 set movement_speed 1.2
 set smoothing 4
 set color purple
+show effects on
+set energy_size 55
 spawn circle
 spawn square
 clear objects
 reset
 ```
 
-Pinch distance: 10–150 reference pixels. Object size: 20–160 reference pixels. Canvas reference is always 640 × 480, independent of CSS size. Actual thumb/index normalized coordinates are scaled to that reference. A held pinch releases at 1.3× the grab threshold. Movement speed scales reach around the canvas center (0.2–3). Smoothing: integer 1–20. Colors match Object Hunter. Dropping a shape fully inside the target completes the mission; shapes wider than the target cannot fit. Tracking loss safely releases the held object.
+Effects default to on. `show effects off` or the Effects button disables the orb/poof; `set energy_size 20` through `100` changes orb radius in reference pixels. Color follows `set color`. Canvas drawing uses a fixed number of strands and 14 puffs, a single existing animation loop, no added model/dependency, and simplified rendering for reduced-motion preferences. Pinching still grabs shapes; a confirmed fist releases a held shape. Pinch distance: 10–150 reference pixels. Object size: 20–160 reference pixels. Canvas reference is always 640 × 480, independent of CSS size. Actual thumb/index normalized coordinates are scaled to that reference. A held pinch releases at 1.3× the grab threshold. Movement speed scales reach around the canvas center (0.2–3). Smoothing: integer 1–20. Colors match Object Hunter. Dropping a shape fully inside the target completes the mission; shapes wider than the target cannot fit. Tracking loss safely releases the held object.
 
 ### Gesture Arcade
 

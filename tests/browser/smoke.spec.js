@@ -185,3 +185,22 @@ test("device check can cancel a pending camera request and retry", async ({
     "ended",
   );
 });
+
+test("gesture effects are discoverable, toggle with commands, and reset", async ({
+  page,
+}) => {
+  await page.goto("/#lab/gesture");
+  await expect(page.locator(".mini-note")).toContainText("energy orb");
+  await page.getByRole("button", { name: "Effects: On" }).click();
+  await expect(
+    page.getByRole("button", { name: "Effects: Off" }),
+  ).toHaveAttribute("aria-pressed", "false");
+  await page
+    .locator("#commands")
+    .fill("show effects on\nset energy_size 80\nset color blue");
+  await page.getByRole("button", { name: "Run Commands" }).click();
+  await expect(page.getByRole("button", { name: "Effects: On" })).toBeVisible();
+  await expect(page.locator("#settings")).toContainText("80");
+  await page.getByRole("button", { name: "Reset Lab" }).click();
+  await expect(page.locator("#settings")).toContainText("55");
+});

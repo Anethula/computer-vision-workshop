@@ -1,5 +1,7 @@
 # Your vision playground cheatsheet
 
+**New to this?** See GETTING_STARTED.md. On Mac or Windows, joining the deployed workshop requires only Chrome/Edge, a webcam, internet, and camera permission. No cloning, installs, account, or terminal is needed.
+
 Open the workshop URL in Chrome or Edge. Visit Device check. Select a lab, click Start Camera, and allow access. Your images stay on your device.
 
 Paste into the website's console, then click Run Commands (Ctrl/⌘+Enter). Change one thing at a time. Use `help`, `reset`, and Alt+Up/Down for command history. Each command is a separate line. These are workshop commands, not system terminal commands.
@@ -38,10 +40,14 @@ set object_size 80
 set movement_speed 1.2
 set smoothing 4
 set color purple
+show effects on
+set energy_size 55
 spawn circle
 spawn square
 clear objects
 ```
+
+Bonus: extend all four fingers with your palm facing the camera to charge an energy orb; close your fist to make it poof. Hold each pose briefly. Open again to recharge. Use the Effects button or `show effects off` to disable animations. Energy size is 20–100; color follows `set color`.
 
 Mission: move a shape into the green target using a pinch. Index tip controls the cursor. Pinch thumb/index to grab; release to drop. Distances and sizes use a fixed 640 × 480 canvas, scaled to your screen.
 

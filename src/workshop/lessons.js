@@ -67,20 +67,21 @@ export const labs = [
     difficulty: "Intermediate",
     accent: "blue",
     description:
-      "Reach into the canvas. Pinch, grab, and move shapes with just your hand.",
+      "Pinch and move shapes, spread your fingers to charge an energy orb, then close your fist: poof!",
     objective: "Map landmarks into coordinates and build a gesture.",
     challenge:
       "Move the virtual circle into the target without touching your mouse.",
     steps:
-      "Point at a shape, pinch to grab, move into the target, and release. Try different pinch distances and smoothing values.",
+      "Point at a shape, pinch to grab, move into the target, and release. Try different pinch distances and smoothing values. Then face your palm toward the camera, extend all four fingers to charge an energy orb, and close into a fist to release a poof.",
     question: "What happens if the pinch threshold is too large?",
     explanation:
-      "The index tip is landmark 8 and thumb tip is landmark 4. Their Euclidean distance defines a pinch. Coordinates map to a mirrored 640 × 480 canvas. Release uses a threshold 30% larger than grab to prevent flicker.",
+      "The index tip is landmark 8 and thumb tip is landmark 4. Their Euclidean distance defines a pinch. Coordinates map to a mirrored 640 × 480 canvas. Release uses a threshold 30% larger than grab to prevent flicker. Finger bend angles and distances relative to your palm distinguish an open hand from a fist. Two fresh model results confirm a pose before an effect triggers.",
     experiment:
       "Compare pinch_distance 25 and 75. Spawn a square and change its size.",
-    optional: "Add a finger drawing trail after the workshop.",
+    optional:
+      "Try set energy_size 80 and set color blue. Use show effects off for a simpler canvas.",
     example:
-      "show landmarks on\nset pinch_distance 40\nset object_size 80\nset smoothing 4\nspawn circle",
+      "show landmarks on\nset pinch_distance 40\nset object_size 80\nset smoothing 4\nshow effects on\nset energy_size 55\nspawn circle",
     code: "const distance = Math.hypot(\n  thumb.x - index.x,\n  thumb.y - index.y\n);\nconst grabbing = distance < THRESHOLD;",
     exerciseKey: "pinch_distance",
     exerciseValue: 35,

@@ -1,3 +1,4 @@
+import { createHandEnergy } from "./hand-energy.js";
 import {
   toCanvas,
   pinchDistance,
@@ -11,6 +12,7 @@ export function createGesture() {
       { x: 180, y: 230, shape: "circle" },
       { x: 310, y: 330, shape: "square" },
     ],
+    energy: createHandEnergy(),
     cursor: null,
     pinching: false,
     grabbed: null,
@@ -31,11 +33,9 @@ export function updateGesture(state, hand, settings) {
     y: clamp(240 + (p.y - 240) * settings.movement_speed, 0, 480),
   };
   state.cursor = smoothPoint(state.cursor, next, settings.smoothing);
-  const pinch = isPinching(
-    pinchDistance(hand),
-    settings.pinch_distance,
-    state.pinching,
-  );
+  const pinch =
+    !(settings.effects && state.energy.pose === "fist") &&
+    isPinching(pinchDistance(hand), settings.pinch_distance, state.pinching);
   if (pinch && !state.pinching) {
     state.grabbed =
       state.objects.findLast((o) =>

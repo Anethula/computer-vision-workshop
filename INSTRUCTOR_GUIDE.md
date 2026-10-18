@@ -2,6 +2,8 @@
 
 ## Before students arrive
 
+Share GETTING_STARTED.md. Students on Mac/Windows joining the deployed website need a compatible browser, webcam, internet and camera permission; development-tool installation and cloning are unnecessary. Students editing the source locally need Node.js 22+ and optionally Git. No Python or API keys are required.
+
 Deploy to HTTPS and open `#check` on the room projector, your laptop, and a representative student device. Initialize all models on the campus network. Test lighting, camera permission, a bottle, a smile, a pinch drag, and a full arcade round. Bring an object photo as a fallback. Share the deployed URL or a QR code on your opening slide. Students install nothing.
 
 The website complements your PowerPoint: put one prediction and 3–5 copyable commands on each slide. Keep the site's Workshop guide open beside your slides. Explain that the website console is a small custom language; students should not paste commands into their operating-system terminal.
@@ -73,7 +75,7 @@ Experiment: move index fingertip to a shape, pinch thumb and index, move into th
 
 Explain: landmarks 4 and 8 define a distance in a 640 × 480 reference. The display is mirrored to match natural hand movement. The release threshold is larger than the grab threshold so tiny changes do not cause flicker. Smoothing trades responsiveness for stability. Large objects may not fit into the target.
 
-Optional: add a fingertip drawing trail after class.
+Energy experiment: have students face their palm to the camera, extend all four fingers, and hold briefly to charge an orb. Close into a fist to poof, then open again to recharge. Try `set energy_size 80`, `set color blue`, and `show effects off`. Explain palm-relative distances, bend angles, and confirmation across fresh frames. A fist alone must not generate repeated bursts. Pinch-and-drag remains available; effects can be disabled on slower devices. Reduced-motion preferences simplify the graphics. This activity fits within Lab 3’s existing 20-minute slot.
 
 ## Lab 4 — Gesture Arcade
 

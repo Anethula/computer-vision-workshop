@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 import { readFile } from "node:fs/promises";
 test("real face and hand photographs yield actual blendshapes and 21 hand points", async ({
   page,
-}) => {
+}, testInfo) => {
   await page.goto("/");
   const face = (
     await readFile(new URL("../fixtures/portrait.jpg", import.meta.url))
@@ -29,7 +29,35 @@ test("real face and hand photographs yield actual blendshapes and 21 hand points
         await image(hand),
         performance.now(),
       );
+      const {
+        classifyHandPose,
+        createHandEnergy,
+        observeHandEnergy,
+        advanceHandEnergy,
+        renderHandEnergy,
+      } = await import("/src/labs/hand-energy.js");
+      const { initialSettings } = await import("/src/shared/settings.js");
+      const energy = createHandEnergy(),
+        settings = initialSettings("gesture");
+      observeHandEnergy(energy, handResult.landmarks[0], settings, 0);
+      observeHandEnergy(energy, handResult.landmarks[0], settings, 100);
+      advanceHandEnergy(energy, 0.1, settings, 200);
+      const canvas = document.createElement("canvas");
+      canvas.id = "energy-preview";
+      canvas.width = 640;
+      canvas.height = 480;
+      canvas.style.cssText =
+        "position:fixed;left:0;top:0;z-index:999;background:#101114";
+      document.body.append(canvas);
+      const ctx = canvas.getContext("2d");
+      ctx.save();
+      ctx.translate(640, 0);
+      ctx.scale(-1, 1);
+      ctx.drawImage(await image(hand), 0, 0, 640, 480);
+      ctx.restore();
+      renderHandEnergy(ctx, energy, settings, "#6aaaff");
       return {
+        handPose: classifyHandPose(handResult.landmarks[0]),
         facePoints: faceResult.faceLandmarks[0]?.length,
         categories: faceResult.faceBlendshapes[0]?.categories,
         handPoints: handResult.landmarks[0]?.length,
@@ -37,8 +65,12 @@ test("real face and hand photographs yield actual blendshapes and 21 hand points
     },
     { face, hand },
   );
+  await page
+    .locator("#energy-preview")
+    .screenshot({ path: testInfo.outputPath("energy-orb.png") });
   expect(results.facePoints).toBe(478);
   expect(results.handPoints).toBe(21);
+  expect(results.handPose).toBe("open");
   for (const name of [
     "mouthSmileLeft",
     "mouthSmileRight",

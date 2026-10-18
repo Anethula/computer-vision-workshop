@@ -17,6 +17,8 @@ export const defaults = {
     smoothing: 5,
   },
   gesture: {
+    effects: true,
+    energy_size: 55,
     landmarks: true,
     pinch_distance: 40,
     object_size: 80,
@@ -34,6 +36,7 @@ export const defaults = {
   },
 };
 export const ranges = {
+  energy_size: [20, 100],
   confidence: [0.05, 1],
   smile_threshold: [0.05, 1],
   surprise_threshold: [0.05, 1],

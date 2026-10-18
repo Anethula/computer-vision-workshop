@@ -2,7 +2,15 @@
 
 Executed on macOS ARM64 with Node.js 24.2.0. The project supports Node.js 22+ for organizers. Browser automation used Playwright 1.56.1 and its Chromium 141.0.7390.37. No real webcam hardware was accessed during testing.
 
-## Completed checks
+## Lab 3 energy update — October 18, 2026
+
+- `npm test`: 18 passing logic/asset tests, including palm-relative and rotation/mirror/scale pose rules, confirmation across fresh results, single-burst open→fist transitions, tracking loss, stale tracking, disabling effects, reset, and balanced Canvas state.
+- `npm run test:browser`: 13 passing cases (26.9 seconds), including a real Hand Landmarker photograph classified as open and the new effects toggle/command/reset UI. A focused real-model rendering test also passed and its energy-orb preview was visually inspected.
+- `npm run build`: successful. No runtime dependency or model was added. Effects use the existing Canvas animation loop and hand-model worker results.
+- Open-hand classification was checked on actual model output from a photo. Fist transitions use deterministic constructed landmark inputs in tests; physical open→fist webcam behavior on Mac/Windows remains a manual acceptance check.
+- Beginner Mac/Windows setup, optional cloning prerequisites, reduced-motion behavior, and troubleshooting are documented in GETTING_STARTED.md.
+
+## Original platform checks — October 12, 2026
 
 - `npm install`: successful; exact runtime/dev dependencies and package lock installed.
 - `npm run models`: successful; actual MediaPipe version-1 face/hand models, COCO model plus all five shards, version-matched WASM, and a real sample photo downloaded.
@@ -21,7 +29,7 @@ Browser failures found during development were corrected or rerun after the sour
 
 These checks are still required and are **not claimed as passed**:
 
-1. Real webcam permission, detection, facial movements/blinks, hand pinch/drag/release, and hand-controlled arcade on representative Windows, macOS, and ChromeOS laptops using Chrome/Edge.
+1. Real webcam permission, detection, facial movements/blinks, hand pinch/drag/release, open-hand orb → fist poof transitions, and hand-controlled arcade on representative Windows, macOS, and ChromeOS laptops using Chrome/Edge.
 2. Real camera mirroring and box/landmark alignment for 4:3 and 16:9 camera devices; software transforms are tested, but hardware previews need checking.
 3. Full live 90-minute workshop, projector legibility, low-end performance, and simultaneous classroom asset downloads.
 4. The actual deployed GitHub Pages HTTPS URL and campus Wi-Fi model loading/permissions. No remote repository or deployment was created in this task.
