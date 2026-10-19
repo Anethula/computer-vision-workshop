@@ -119,11 +119,15 @@ export const labs = [
   },
 ];
 export const agenda = [
-  ["00–10", "Welcome & live demos", "See what a camera can do."],
-  ["10–20", "Computer vision, explained", "Pixels → models → predictions."],
-  ["20–35", "Object Hunter", "Find, filter, and track objects."],
-  ["35–50", "Expression Analyzer", "Read movement. Explore thresholds."],
-  ["50–70", "Gesture Controller", "Build a pinch-and-drag interaction."],
-  ["70–85", "Gesture Arcade", "Tune your game. Beat your best."],
-  ["85–90", "Showcase & wrap-up", "Share an experiment and what you learned."],
+  ["00–05", "Welcome & device check", "Open the site, allow the camera, and start model loading."],
+  ["05–20", "Computer vision essentials", "Pixels, inference, model outputs, confidence, and landmarks."],
+  ["20–30", "Object Hunter", "Detect an object, compare thresholds, and filter one class."],
+  ["30–33", "Debugging & catch-up", "Check camera access, commands, lighting, and model loading."],
+  ["33–42", "Expression Analyzer", "Inspect movement scores and compare smile thresholds."],
+  ["42–45", "Debugging & catch-up", "Help students find a face and confirm their settings."],
+  ["45–59", "Gesture Controller & energy effects", "Pinch and drag, charge an orb, and close a fist to poof."],
+  ["59–63", "Debugging & catch-up", "Adjust hand position, pinch distance, and smoothing."],
+  ["63–72", "Gesture Arcade", "Play a short round and change one difficulty setting."],
+  ["72–75", "Recap & closing", "Share one observation, collect feedback, and close the guided session."],
+  ["75–90", "Optional exploration & individual help", "Guided content is finished. Stay for questions or experiments if you like."],
 ];

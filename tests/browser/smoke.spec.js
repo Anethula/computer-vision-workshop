@@ -8,7 +8,10 @@ test("dashboard, workshop and responsive navigation", async ({ page }) => {
   ).toBeVisible();
   await expect(page.locator(".lab-card")).toHaveCount(4);
   await page.getByRole("link", { name: "Workshop guide" }).click();
-  await expect(page.locator(".agenda>div")).toHaveCount(7);
+  await expect(page.locator(".agenda>div")).toHaveCount(11);
+  await expect(page.locator(".agenda")).toContainText("75–90");
+  await expect(page.locator(".agenda")).toContainText("Debugging & catch-up");
+  await expect(page.locator(".agenda")).toContainText("Guided content is finished");
   await page.setViewportSize({ width: 390, height: 844 });
   await expect(
     page.getByRole("heading", { name: "From pixels to possibilities." }),

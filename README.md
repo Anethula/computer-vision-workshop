@@ -110,7 +110,7 @@ Difficulty easy/medium/hard applies base speed and paddle presets (2/160, 4/120,
 
 ## Workshop and programming
 
-The in-app Workshop guide contains the 90-minute agenda, objectives, copyable commands, prediction questions, experiments, explanations, and optional challenges. See [INSTRUCTOR_GUIDE.md](INSTRUCTOR_GUIDE.md) and [STUDENT_CHEATSHEET.md](STUDENT_CHEATSHEET.md).
+The guided workshop targets a finish at minute 75, with 10 minutes of scheduled debugging/catch-up and the final 15 minutes reserved for optional exploration or individual help. The opening concepts take 15 minutes; further concepts accompany the labs. The in-app Workshop guide contains the 90-minute agenda, objectives, copyable commands, prediction questions, experiments, explanations, and optional challenges. See [INSTRUCTOR_GUIDE.md](INSTRUCTOR_GUIDE.md) and [STUDENT_CHEATSHEET.md](STUDENT_CHEATSHEET.md).
 
 Level 1 uses commands. Level 2 displays real JavaScript concepts alongside restricted numeric variable editors that use the same validated settings path. Level 3 uses pure starter functions in [challenges/](challenges/README.md); students fork the repository after the workshop to edit code and integrate their rules into the named lab module. Arbitrary JavaScript is never evaluated in the website.
 

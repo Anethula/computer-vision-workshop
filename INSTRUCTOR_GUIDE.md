@@ -8,15 +8,33 @@ Deploy to HTTPS and open `#check` on the room projector, your laptop, and a repr
 
 The website complements your PowerPoint: put one prediction and 3–5 copyable commands on each slide. Keep the site's Workshop guide open beside your slides. Explain that the website console is a small custom language; students should not paste commands into their operating-system terminal.
 
+## Revised timing
+
+Aim to finish the guided workshop at minute 75, leaving the final 15 minutes free for optional questions, individual help, or exploration. The schedule includes 10 minutes of debugging/catch-up before closing. Keep minute 80 as an absolute latest finish so students still have at least 10 minutes left.
+
 | Minutes | Activity |
 | --- | --- |
-| 0–10 | Welcome, camera/privacy explanation, demonstrate each lab. |
-| 10–20 | Pixels, trained models, predictions, coordinates, confidence. |
-| 20–35 | Object Hunter: detect a water bottle and filter results. |
-| 35–50 | Facial Expression Analyzer: tune the smile threshold. |
-| 50–70 | Gesture Controller: pinch, drag, drop into the target. |
-| 70–85 | Gesture Arcade: build a custom difficulty and compare scores. |
-| 85–90 | Student showcase: prediction, change, observation, explanation. |
+| 0–5 | Welcome and device check: website, camera permission, model loading. |
+| 5–20 | Essential concepts: pixels, training vs inference, model outputs, confidence, landmarks. |
+| 20–30 | Object Hunter: detect an object, compare thresholds, track a bottle. |
+| 30–33 | Debugging and catch-up. |
+| 33–42 | Expression Analyzer: inspect scores and compare smile thresholds. |
+| 42–45 | Debugging and catch-up. |
+| 45–59 | Gesture Controller: pinch/drag and open-hand orb/fist poof. |
+| 59–63 | Debugging and catch-up. |
+| 63–72 | Gesture Arcade: one short round and one difficulty change. |
+| 72–75 | Recap, feedback, and closing. |
+| 75–90 | Optional exploration, questions, and individual help. Guided content is finished. |
+
+### Presentation pacing
+
+Use about 6–8 introductory concept slides rather than a 45-minute lecture. Cover what computer vision does, pixels/video, training vs inference, the models and their outputs, confidence thresholds, and landmarks. Revisit the relevant idea during each demo. Teach smoothing, pinch/release margins, gesture state, and collision detection alongside the corresponding activity.
+
+Each lab needs one baseline command block, one parameter experiment, and a brief checkpoint. Keep commands visible while students try them. Start model downloads during arrival whenever possible; permission and network problems can exceed the planned five-minute setup.
+
+During catch-up, check whether students selected the correct lab, whether the camera/model loaded, and whether the console reported an error. Give students who are already ready an optional experiment rather than starting the next required activity early. If nobody needs help, continue ahead of schedule and preserve the early finish.
+
+Protect the closing and final free time. If behind schedule, skip extra expression categories, repeated smoothing comparisons, extra shape customization, and additional arcade rounds. Keep the baseline activity in every lab and the energy demonstration. Move source-code exercises and extended challenges to the optional period or after class. Avoid debugging a single laptop in front of the whole room for more than a couple of minutes: use the documented image/arcade fallback or arrange individual help.
 
 ## Lab 1 — Object Hunter
 
@@ -75,7 +93,7 @@ Experiment: move index fingertip to a shape, pinch thumb and index, move into th
 
 Explain: landmarks 4 and 8 define a distance in a 640 × 480 reference. The display is mirrored to match natural hand movement. The release threshold is larger than the grab threshold so tiny changes do not cause flicker. Smoothing trades responsiveness for stability. Large objects may not fit into the target.
 
-Energy experiment: have students face their palm to the camera, extend all four fingers, and hold briefly to charge an orb. Close into a fist to poof, then open again to recharge. Try `set energy_size 80`, `set color blue`, and `show effects off`. Explain palm-relative distances, bend angles, and confirmation across fresh frames. A fist alone must not generate repeated bursts. Pinch-and-drag remains available; effects can be disabled on slower devices. Reduced-motion preferences simplify the graphics. This activity fits within Lab 3’s existing 20-minute slot.
+Energy experiment: have students face their palm to the camera, extend all four fingers, and hold briefly to charge an orb. Close into a fist to poof, then open again to recharge. Try `set energy_size 80`, `set color blue`, and `show effects off`. Explain palm-relative distances, bend angles, and confirmation across fresh frames. A fist alone must not generate repeated bursts. Pinch-and-drag remains available; effects can be disabled on slower devices. Reduced-motion preferences simplify the graphics. Include this activity within Lab 3’s 14-minute slot, keeping repeated customization trials optional.
 
 ## Lab 4 — Gesture Arcade
 
