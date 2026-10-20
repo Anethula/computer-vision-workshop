@@ -1297,3 +1297,24 @@ input[type="number"] {
     transition: none !important;
   }
 }
+
+/* Keep the camera's 4:3 coordinates intact in both fullscreen modes. */
+.vision-panel:fullscreen,
+.vision-panel.expanded {
+  background: #11151d;
+  width: 100%;
+  height: 100dvh;
+  overflow: auto;
+  border-radius: 0;
+}
+.vision-panel.expanded {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+}
+.vision-panel:fullscreen .stage,
+.vision-panel.expanded .stage {
+  width: min(calc(100% - 32px), calc((100dvh - 240px) * 4 / 3));
+  min-width: 160px;
+  margin: 12px auto;
+}

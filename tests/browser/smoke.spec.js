@@ -207,3 +207,31 @@ test("gesture effects are discoverable, toggle with commands, and reset", async 
   await page.getByRole("button", { name: "Reset Lab" }).click();
   await expect(page.locator("#settings")).toContainText("55");
 });
+
+test("every lab can enter and exit fullscreen with controls available", async ({ page }) => {
+  for (const id of ["object", "face", "gesture", "arcade"]) {
+    await page.goto("/#lab/" + id);
+    const button = page.locator("#fullscreen");
+    await button.click();
+    await expect(button).toHaveText("Exit fullscreen");
+    await expect(page.locator("#start-camera")).toBeVisible();
+    const ratio = await page.locator("#canvas").evaluate(el => {
+      const r = el.getBoundingClientRect();
+      return r.width / r.height;
+    });
+    expect(ratio).toBeCloseTo(4 / 3, 1);
+    await button.click();
+    await expect(button).toHaveText("Fullscreen");
+  }
+});
+
+test("fullscreen fallback exits with Escape", async ({ page }) => {
+  await page.goto("/#lab/arcade");
+  await page.evaluate(() => {
+    document.querySelector("#vision-panel").requestFullscreen = undefined;
+  });
+  await page.locator("#fullscreen").click();
+  await expect(page.locator("#vision-panel")).toHaveClass(/expanded/);
+  await page.keyboard.press("Escape");
+  await expect(page.locator("#fullscreen")).toHaveText("Fullscreen");
+});
