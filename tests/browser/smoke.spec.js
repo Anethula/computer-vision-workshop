@@ -8,10 +8,7 @@ test("dashboard, workshop and responsive navigation", async ({ page }) => {
   ).toBeVisible();
   await expect(page.locator(".lab-card")).toHaveCount(4);
   await page.getByRole("link", { name: "Workshop guide" }).click();
-  await expect(page.locator(".agenda>div")).toHaveCount(11);
-  await expect(page.locator(".agenda")).toContainText("75–90");
-  await expect(page.locator(".agenda")).toContainText("Debugging & catch-up");
-  await expect(page.locator(".agenda")).toContainText("Guided content is finished");
+  await expect(page.locator(".agenda")).toHaveCount(0);
   await page.setViewportSize({ width: 390, height: 844 });
   await expect(
     page.getByRole("heading", { name: "From pixels to possibilities." }),
@@ -234,4 +231,38 @@ test("fullscreen fallback exits with Escape", async ({ page }) => {
   await expect(page.locator("#vision-panel")).toHaveClass(/expanded/);
   await page.keyboard.press("Escape");
   await expect(page.locator("#fullscreen")).toHaveText("Fullscreen");
+});
+
+test("code editor applies settings and each lab prints inspectable output", async ({ page }) => {
+  for (const [lab, key, value, output] of [
+    ["object", "confidence", ".8", "predictions"],
+    ["face", "smile_threshold", ".3", "faceResult"],
+    ["gesture", "pinch_distance", "60", "handResult"],
+    ["arcade", "paddle_width", "180", "arcadeResult"],
+  ]) {
+    await page.goto("/#lab/" + lab);
+    await page.locator("#code-input").fill(`const ${key} = ${value};`);
+    await page.locator("#apply-code").click();
+    await expect(page.locator("#code-status")).toContainText("Applied.");
+    await expect(page.locator("#settings")).toContainText(String(Number(value)));
+    await expect(page.locator("#live-output")).toContainText("const " + output);
+    await page.locator("#freeze-output").click();
+    await expect(page.locator("#freeze-output")).toHaveText("Resume output");
+    await page.locator("#code-input").fill("const nonsense = 1;");
+    await page.locator("#apply-code").click();
+    await expect(page.locator("#code-status")).toContainText("No code changes applied");
+  }
+});
+
+test("lab metrics sit beside camera and console sits underneath", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto("/#lab/object");
+  const camera = await page.locator("#vision-panel").boundingBox();
+  const metrics = await page.locator(".metrics-panel").boundingBox();
+  const consolePanel = await page.locator(".console-panel").boundingBox();
+  expect(metrics.x).toBeGreaterThan(camera.x + camera.width - 1);
+  expect(Math.abs(metrics.y - camera.y)).toBeLessThan(2);
+  expect(consolePanel.y).toBeGreaterThanOrEqual(Math.max(camera.y + camera.height, metrics.y + metrics.height));
+  await expect(page.locator(".metrics-panel #live-output")).toBeVisible();
+  await expect(page.locator(".console-panel #code-input")).toBeVisible();
 });

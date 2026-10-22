@@ -1,3 +1,4 @@
+import { starterCode, codeCommands } from "./shared/code-lab.js";
 import {
   observeHandEnergy,
   advanceHandEnergy,
@@ -5,7 +6,7 @@ import {
   resetHandEnergy,
 } from "./labs/hand-energy.js";
 import "./styles/main.css";
-import { labs, agenda } from "./workshop/lessons.js";
+import { labs } from "./workshop/lessons.js";
 import { initialSettings, colors, ranges } from "./shared/settings.js";
 import {
   parseCommand,
@@ -36,7 +37,7 @@ import {
   renderHandGuide,
 } from "./labs/gesture-arcade.js";
 import { renderLandmarks } from "./shared/rendering.js";
-import { clamp } from "./shared/coordinates.js";
+import { pinchDistance, clamp } from "./shared/coordinates.js";
 const app = document.querySelector("#app");
 const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 const escape = (s) =>
@@ -110,7 +111,7 @@ function lessonMarkup(l) {
 }
 function workshop() {
   shell(
-    `<section class="page-intro"><span class="eyebrow">YOUR 90-MINUTE FIELD GUIDE</span><h1>From pixels to possibilities.</h1><p>Predict first. Change one thing. Explain what happened.</p></section><div class="agenda">${agenda.map(([time, title, desc]) => `<div><code>${time} min</code><h3>${title}</h3><p>${desc}</p></div>`).join("")}</div>${labs.map((l) => `<section class="workshop-lab"><div class="section-heading"><div><span class="eyebrow">LAB ${l.number} / ${l.objective}</span><h2>${l.fullTitle || l.title}</h2></div><a href="#lab/${l.id}" class="button subtle">Open lab ↗</a></div>${lessonMarkup(l)}<div class="copy-block"><pre>${escape(l.example)}</pre><button class="button" data-copy="${l.id}">Copy commands</button></div></section>`).join("")}<aside class="privacy-note">A camera is an input, not a mind reader. Facial movements do not reliably reveal internal emotions. No images are uploaded or recorded by this application.</aside>`,
+    `<section class="page-intro"><span class="eyebrow">YOUR 90-MINUTE FIELD GUIDE</span><h1>From pixels to possibilities.</h1><p>Predict first. Change one thing. Explain what happened.</p></section>${labs.map((l) => `<section class="workshop-lab"><div class="section-heading"><div><span class="eyebrow">LAB ${l.number} / ${l.objective}</span><h2>${l.fullTitle || l.title}</h2></div><a href="#lab/${l.id}" class="button subtle">Open lab ↗</a></div>${lessonMarkup(l)}<div class="copy-block"><pre>${escape(l.example)}</pre><button class="button" data-copy="${l.id}">Copy commands</button></div></section>`).join("")}<aside class="privacy-note">A camera is an input, not a mind reader. Facial movements do not reliably reveal internal emotions. No images are uploaded or recorded by this application.</aside>`,
     "workshop",
   );
   app
@@ -193,9 +194,18 @@ function labPage(id) {
   game = createGame(settings.arcade, high);
   historyIndex = histories[id].length;
   shell(
-    `<div class="lab-heading"><a href="#home" class="back">← All labs</a><div><span class="eyebrow">LAB ${l.number} / ${l.tag}</span><h1>${l.fullTitle || l.title}</h1><p>${l.objective}</p></div><span class="difficulty">${l.difficulty}</span></div><div class="workspace"><section class="vision-panel panel" id="vision-panel"><div class="panel-title"><span><i class="dot" id="camera-dot"></i> LIVE INPUT</span><span id="source-label">640 × 480 · mirrored</span></div><div class="stage" id="stage"><video id="video" autoplay muted playsinline></video><canvas id="canvas" width="640" height="480" tabindex="0" aria-label="${id === "arcade" ? "Arcade game. Left and right arrow keys move the paddle." : l.title + " camera overlay"}"></canvas><div class="stage-empty" id="stage-empty"><span>${l.icon}</span><h2>Your world is the input.</h2><p>Connect your webcam to start exploring.</p><small>Local processing. No uploads.</small></div></div><div class="camera-toolbar"><button class="button" id="fullscreen" aria-pressed="false">Fullscreen</button><button class="button primary" id="start-camera">◉ Start Camera</button><button class="button" id="stop-camera" disabled>Stop Camera</button><button class="button" id="retry" hidden>Retry</button>${id === "gesture" ? '<button class="button" id="energy-toggle" aria-pressed="true">Effects: On</button>' : ""}${id === "object" ? '<button class="button" id="sample">Sample image</button><label class="button upload">Upload image<input id="upload" type="file" accept="image/*"></label>' : ""}${id === "arcade" ? '<button class="button" id="play">Start game</button><button class="button" id="pause">Pause</button>' : ""}</div><div class="tracking-status" id="status" role="status">Camera off. ${id === "arcade" ? "Keyboard and pointer controls are ready." : "Ready when you are."}</div><div class="result-panel" id="results"></div>${id === "gesture" ? '<div class="mini-note">Open your hand with all four fingers extended to charge an energy orb. Close into a fist to make it poof! Hold each pose briefly with your palm facing the camera. Pinch still grabs shapes. Use “show effects off” to disable effects. Distances use a 640 × 480 reference canvas.</div>' : ""}${id === "face" ? '<div class="mini-note">Visible expression estimates describe facial movement, not someone’s internal emotions.</div>' : ""}${id === "arcade" ? '<div class="mini-note">Move your index fingertip within the center guide in the camera preview to reach the whole paddle range. Keep your whole hand visible and move back if you reach the frame edge. ← → arrows or pointer also work. Gold orbs = 5 points.</div>' : ""}</section><section class="console-panel panel"><div class="panel-title"><span><i class="terminal-icon">›_</i> EXPERIMENT CONSOLE</span><span>WORKSHOP COMMANDS</span></div><div class="console-hint">Change a value. Run it. Watch what happens.</div><label class="sr-only" for="commands">Workshop commands</label><div class="editor"><span class="prompt">›</span><textarea id="commands" spellcheck="false" aria-describedby="console-shortcut">${l.example}</textarea></div><div class="console-actions"><button class="button primary" id="run">Run Commands <span>↵</span></button><button class="button" id="copy-example">Copy Example</button></div><small id="console-shortcut">Ctrl / ⌘ + Enter to run · Alt + ↑ / ↓ for history</small><div class="console-output" id="output" role="log" aria-live="polite"></div><div class="utility-row"><button id="help">Help</button><button id="clear-console">Clear Console</button><button id="reset">Reset Lab</button></div><details id="command-help"><summary>Available commands</summary><pre>${escape(commandReference(id).join("\n"))}</pre></details><details open><summary>Current settings</summary><div id="settings" class="settings-grid"></div></details></section></div><section class="challenge-banner"><span class="challenge-icon">✦</span><div><span class="eyebrow">YOUR MISSION</span><h2>${l.challenge}</h2><p>${l.steps}</p></div><span class="challenge-badge" id="challenge-badge">TRY IT OUT ↗</span></section><section class="learn-section"><div class="section-heading"><div><span class="eyebrow">A LITTLE LOGIC GOES A LONG WAY</span><h2>Make a prediction. Then test it.</h2></div></div>${lessonMarkup(l)}<details class="code-exercise"><summary>Level 2 · Explore the JavaScript behind the commands</summary><p>Edit a safe variable below. It updates the same live settings as your console; no arbitrary code is executed.</p><pre>${escape(l.code)}</pre><form id="exercise"><label>${l.exerciseKey.toUpperCase()} = <input type="number" id="exercise-value" value="${l.exerciseValue}" min="${ranges[l.exerciseKey][0]}" max="${ranges[l.exerciseKey][1]}" step="${l.exerciseKey.includes("threshold") || l.exerciseKey === "confidence" ? ".05" : "1"}"></label><button class="button" type="submit">Apply variable</button></form><p>Variables store values. Functions group logic. Comparisons return true or false. <code>&&</code> requires both conditions to be true.</p><p>Level 3 · Fork the repository after the workshop. ${l.advanced} See README for instructions.</p></details></section>`,
+    `<div class="lab-heading"><a href="#home" class="back">← All labs</a><div><span class="eyebrow">LAB ${l.number} / ${l.tag}</span><h1>${l.fullTitle || l.title}</h1><p>${l.objective}</p></div><span class="difficulty">${l.difficulty}</span></div><div class="workspace"><section class="vision-panel panel" id="vision-panel"><div class="panel-title"><span><i class="dot" id="camera-dot"></i> LIVE INPUT</span><span id="source-label">640 × 480 · mirrored</span></div><div class="stage" id="stage"><video id="video" autoplay muted playsinline></video><canvas id="canvas" width="640" height="480" tabindex="0" aria-label="${id === "arcade" ? "Arcade game. Left and right arrow keys move the paddle." : l.title + " camera overlay"}"></canvas><div class="stage-empty" id="stage-empty"><span>${l.icon}</span><h2>Your world is the input.</h2><p>Connect your webcam to start exploring.</p><small>Local processing. No uploads.</small></div></div><div class="camera-toolbar"><button class="button" id="fullscreen" aria-pressed="false">Fullscreen</button><button class="button primary" id="start-camera">◉ Start Camera</button><button class="button" id="stop-camera" disabled>Stop Camera</button><button class="button" id="retry" hidden>Retry</button>${id === "gesture" ? '<button class="button" id="energy-toggle" aria-pressed="true">Effects: On</button>' : ""}${id === "object" ? '<button class="button" id="sample">Sample image</button><label class="button upload">Upload image<input id="upload" type="file" accept="image/*"></label>' : ""}${id === "arcade" ? '<button class="button" id="play">Start game</button><button class="button" id="pause">Pause</button>' : ""}</div><div class="tracking-status" id="status" role="status">Camera off. ${id === "arcade" ? "Keyboard and pointer controls are ready." : "Ready when you are."}</div><div class="result-panel" id="results"></div><details class="data-inspector" open><summary>Live JavaScript output</summary><p>Current results, refreshed live. Pause to inspect or copy a snapshot. null means no detection. Coordinates: boxes use 640 × 480 reference pixels; landmarks use normalized image coordinates. Face scores are smoothed; gesture and game state are derived by our code.</p><button class="button" id="freeze-output" aria-pressed="false">Pause output</button> <button class="button" id="copy-output">Copy output</button><pre id="live-output"></pre></details>${id === "gesture" ? '<div class="mini-note">Open your hand with all four fingers extended to charge an energy orb. Close into a fist to make it poof! Hold each pose briefly with your palm facing the camera. Pinch still grabs shapes. Use “show effects off” to disable effects. Distances use a 640 × 480 reference canvas.</div>' : ""}${id === "face" ? '<div class="mini-note">Visible expression estimates describe facial movement, not someone’s internal emotions.</div>' : ""}${id === "arcade" ? '<div class="mini-note">Move your index fingertip within the center guide in the camera preview to reach the whole paddle range. Keep your whole hand visible and move back if you reach the frame edge. ← → arrows or pointer also work. Gold orbs = 5 points.</div>' : ""}</section><section class="console-panel panel"><div class="panel-title"><span><i class="terminal-icon">›_</i> EXPERIMENT CONSOLE</span><span>WORKSHOP COMMANDS</span></div><details class="code-lab" open><summary>Edit JavaScript settings</summary><p>Change numeric const assignments and apply them to the demo. This editor supports numeric declarations and // comments, not arbitrary JavaScript. Reload settings to discard edits and read current values.</p><label class="sr-only" for="code-input">JavaScript settings</label><textarea id="code-input" spellcheck="false"></textarea><div class="button-row"><button class="button primary" id="apply-code">Apply code</button><button class="button" id="reload-code">Reload settings</button></div><p id="code-status" role="status"></p></details><div class="console-hint">Change a value. Run it. Watch what happens.</div><label class="sr-only" for="commands">Workshop commands</label><div class="editor"><span class="prompt">›</span><textarea id="commands" spellcheck="false" aria-describedby="console-shortcut">${l.example}</textarea></div><div class="console-actions"><button class="button primary" id="run">Run Commands <span>↵</span></button><button class="button" id="copy-example">Copy Example</button></div><small id="console-shortcut">Ctrl / ⌘ + Enter to run · Alt + ↑ / ↓ for history</small><div class="console-output" id="output" role="log" aria-live="polite"></div><div class="utility-row"><button id="help">Help</button><button id="clear-console">Clear Console</button><button id="reset">Reset Lab</button></div><details id="command-help"><summary>Available commands</summary><pre>${escape(commandReference(id).join("\n"))}</pre></details><details open><summary>Current settings</summary><div id="settings" class="settings-grid"></div></details></section></div><section class="challenge-banner"><span class="challenge-icon">✦</span><div><span class="eyebrow">YOUR MISSION</span><h2>${l.challenge}</h2><p>${l.steps}</p></div><span class="challenge-badge" id="challenge-badge">TRY IT OUT ↗</span></section><section class="learn-section"><div class="section-heading"><div><span class="eyebrow">A LITTLE LOGIC GOES A LONG WAY</span><h2>Make a prediction. Then test it.</h2></div></div>${lessonMarkup(l)}<details class="code-exercise"><summary>Level 2 · Explore the JavaScript behind the commands</summary><p>Edit a safe variable below. It updates the same live settings as your console; no arbitrary code is executed.</p><pre>${escape(l.code)}</pre><form id="exercise"><label>${l.exerciseKey.toUpperCase()} = <input type="number" id="exercise-value" value="${l.exerciseValue}" min="${ranges[l.exerciseKey][0]}" max="${ranges[l.exerciseKey][1]}" step="${l.exerciseKey.includes("threshold") || l.exerciseKey === "confidence" ? ".05" : "1"}"></label><button class="button" type="submit">Apply variable</button></form><p>Variables store values. Functions group logic. Comparisons return true or false. <code>&&</code> requires both conditions to be true.</p><p>Level 3 · Fork the repository after the workshop. ${l.advanced} See README for instructions.</p></details></section>`,
     "lab",
   );
+  const workspace = document.querySelector(".workspace");
+  const metrics = document.createElement("section");
+  metrics.className = "metrics-panel panel";
+  metrics.setAttribute("aria-label", "Live metrics and model output");
+  metrics.innerHTML = '<div class="panel-title">LIVE METRICS & OUTPUT</div>';
+  metrics.append($("status"), $("results"), document.querySelector(".data-inspector"));
+  const currentSettings = $("settings").parentElement;
+  metrics.append(currentSettings);
+  workspace.insertBefore(metrics, document.querySelector(".console-panel"));
   $("fullscreen").onclick = async () => {
     const panel = $("vision-panel");
     if (document.fullscreenElement) await document.exitFullscreen();
@@ -210,6 +220,27 @@ function labPage(id) {
     }
     syncFullscreen();
   };
+  $("code-input").value = starterCode(id, settings[id]);
+  $("reload-code").onclick = () => {
+    $("code-input").value = starterCode(id, settings[id]);
+    $("code-status").textContent = "Editor reloaded from current settings.";
+  };
+  $("apply-code").onclick = () => {
+    try {
+      const commands = codeCommands($("code-input").value, id);
+      run(commands);
+      $("code-status").textContent = "Applied. Compare the live output with your prediction.";
+    } catch (error) {
+      $("code-status").textContent = error.message + " No code changes applied.";
+    }
+  };
+  $("freeze-output").onclick = () => {
+    const button = $("freeze-output");
+    const paused = button.getAttribute("aria-pressed") !== "true";
+    button.setAttribute("aria-pressed", String(paused));
+    button.textContent = paused ? "Resume output" : "Pause output";
+  };
+  $("copy-output").onclick = () => copy($("live-output").textContent, $("copy-output"));
   $("start-camera").onclick = start;
   $("retry").onclick = () =>
     sample ? loadImage(sample.toDataURL("image/png")) : start();
@@ -693,6 +724,23 @@ function refreshResults() {
   if (active === "arcade")
     html = `<div class="result-heading"><strong>${game.status.toUpperCase()} · Score ${game.score}</strong><span>Best ${high} · ${hand ? "Hand controller" : "Keyboard / pointer controller"}</span></div>`;
   $("results").innerHTML = html;
+  if ($("freeze-output").getAttribute("aria-pressed") !== "true") {
+    let name, data;
+    if (active === "object") {
+      name = "predictions";
+      data = filterObjects(predictions, settings.object);
+    } else if (active === "face") {
+      name = "faceResult";
+      data = { landmarksDetected: facePoints?.length || 0, smoothedScores: scores, expression: classifyExpression(scores, settings.face) };
+    } else if (active === "gesture") {
+      name = "handResult";
+      data = { landmarks: hand, pinchDistance: hand ? pinchDistance(hand) : null, pinching: gesture.pinching, pose: gesture.energy.pose };
+    } else {
+      name = "arcadeResult";
+      data = { indexTip: hand?.[8] || null, controller: hand ? "hand" : "keyboard / pointer", targetX: game.target, paddleX: game.paddleX, score: game.score, lives: game.lives, status: game.status };
+    }
+    $("live-output").textContent = "const " + name + " = " + JSON.stringify(data, (key, value) => typeof value === "number" ? Math.round(value * 10000) / 10000 : value, 2) + ";";
+  }
 }
 function route() {
   cleanup();
